@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>todolist</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='assets/bootstrap/css/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='assets/css/Navigation-Clean.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='assets/css/styles.css')}}">
+</head>
+
+<body>
+    <nav class="navbar navbar-light navbar-expand-md navigation-clean">
+        <div class="container"><a class="navbar-brand" href="#">todo list</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse"
+                id="navcol-1">
+                <ul class="nav navbar-nav ml-auto">
+                    <!-- <li class="nav-item" role="presentation"><a class="nav-link active" href="#">All</a></li>
+                    <li class="nav-item" role="presentation"><a class="nav-link active" href="#">active</a></li>
+                    <li class="nav-item" role="presentation"><a class="nav-link active" href="#">done</a></li> -->
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container" style="margin-top: 30px;">
+        <div class="row">
+            <div class="col">
+                <form action="/" method="POST">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend"><span class="input-group-text">todo</span></div>
+                            <input class="form-control" type="text" name="job" autofocus>
+                            <div class="input-group-append"><button class="btn btn-primary" type="submit">submit</button></div>
+                        </div>
+                    </div>
+                </form>
+                <!-- <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend"><span class="input-group-text">todo</span></div>
+                        <input class="form-control" type="text">
+                        <div class="input-group-append"><button class="btn btn-primary" type="submit">submit</button></div>
+                    </div>
+                </div> -->
+            </div>
+        </div>
+    </div>
+    <div class="container" style="margin-top: 30px;">
+        <div class="row">
+            <div class="col text-center">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th style="width: 5%;">del</th>
+                                <th>todo</th>
+                                <th style="width: 5%;">done</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for task in tasks %}
+                            <tr>
+                                <td><input type="radio" class="radio" value="{{task.id}}" ></td>
+                                <td {% if task.active is false %} class="lineThrough" {% endif %} >{{task.job}}</td>
+                                <td><input type="checkbox" class="check" value="{{task.id}}" {% if task.active is false %} checked {% endif %}></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{url_for('static', filename='assets/js/jquery.min.js')}}"></script>
+    <script src="{{url_for('static', filename='assets/bootstrap/js/bootstrap.min.js')}}"></script>
+    <script>
+        $("document").ready(function(){
+
+            $("table tbody tr td input.check").click(function() {
+                console.log('click');
+                console.log($(this).parent().prev().toggleClass('lineThrough'));
+            });
+
+            $("table tbody tr td input.radio").on('click', function(){
+                var _id = $(this).val();
+                
+                $.ajax({
+                    url: '{{url_for('index')}}',
+                    type: 'DELETE',
+                    data: {id:_id},
+                    dataType: 'json',
+                    success: function() {
+                        window.location = window.location;
+                    }
+                })
+            });
+
+            $("table tbody tr td input.check").on('click', function(){
+                var _id = $(this).val();
+                
+                $.ajax({
+                    url: '{{url_for('index')}}',
+                    type: 'PUT',
+                    data: {id:_id},
+                    dataType: 'json',
+                    success: function() {
+                        // window.location = window.location;
+                    }
+                })
+            });
+
+
+        });
+    </script>
+    
+    <style>
+        .lineThrough {
+            text-decoration-line: line-through;
+        }
+    </style>
+</body>
+
+</html>
